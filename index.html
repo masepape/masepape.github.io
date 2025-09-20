@@ -7,14 +7,22 @@
 <body>
   <h1>Test WebSocket</h1>
   <script>
-    const ws = new WebSocket("wss://mws-server.up.railway.app");
+    const ws = new WebSocket("wss://mon-serveur.up.railway.app");
     ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
 
+    // Pour le touch
     document.addEventListener('touchmove', e => {
       const touch = e.touches[0];
       const x = touch.clientX / window.innerWidth;
       const y = touch.clientY / window.innerHeight;
+      ws.send(JSON.stringify({id:0, x, y}));
+    });
+
+    // Pour la souris
+    document.addEventListener('mousemove', e => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
       ws.send(JSON.stringify({id:0, x, y}));
     });
   </script>
