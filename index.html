@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pinceau WebSocket</title>
+</head>
+<body>
+  <h1>Test WebSocket</h1>
+  <script>
+    const ws = new WebSocket("wss://ws-server.up.railway.app");
+    ws.onopen = () => console.log("Connecté au serveur");
+    ws.onmessage = msg => console.log("Reçu :", msg.data);
+
+    document.addEventListener('touchmove', e => {
+      const touch = e.touches[0];
+      const x = touch.clientX / window.innerWidth;
+      const y = touch.clientY / window.innerHeight;
+      ws.send(JSON.stringify({id:0, x, y}));
+    });
+  </script>
+</body>
+</html>
