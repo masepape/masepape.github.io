@@ -7,7 +7,7 @@
 <body>
   <h1>Test WebSocket</h1>
   <script>
-    const ws = new WebSocket("wss://ws-server.up.railway.app");
+    const ws = new WebSocket("ws-server-production-299a.up.railway.app");
     ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
 
