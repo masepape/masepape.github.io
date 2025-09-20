@@ -2,10 +2,21 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Test Page WebSocket</title>
+  <title>Pinceau WebSocket</title>
 </head>
 <body>
-  <h1>✅ Mon HTML se charge correctement !</h1>
-  <p>Si tu vois ce texte sur ton navigateur, le fichier est bien chargé.</p>
+  <h1>Test WebSocket</h1>
+  <script>
+    const ws = new WebSocket("wss://mws-server.up.railway.app");
+    ws.onopen = () => console.log("Connecté au serveur");
+    ws.onmessage = msg => console.log("Reçu :", msg.data);
+
+    document.addEventListener('touchmove', e => {
+      const touch = e.touches[0];
+      const x = touch.clientX / window.innerWidth;
+      const y = touch.clientY / window.innerHeight;
+      ws.send(JSON.stringify({id:0, x, y}));
+    });
+  </script>
 </body>
 </html>
