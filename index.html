@@ -16,14 +16,18 @@
       const touch = e.touches[0];
       const x = touch.clientX / window.innerWidth;
       const y = touch.clientY / window.innerHeight;
-      ws.send(JSON.stringify({id:0, x, y}));
+      const msg_touch = JSON.stringify({id:0, x, y});
+      console.log("Envoi TOUCH : ", msg_touch);
+      ws.send(msg_touch);
     });
 
     // Pour la souris
     document.addEventListener('mousemove', e => {
       const x = e.clientX / window.innerWidth;
       const y = e.clientY / window.innerHeight;
-      ws.send(JSON.stringify({id:0, x, y}));
+      const msg_mouse = JSON.stringify({id:0, x, y});
+      console.log("Envoi MOUSE : ", msg_mouse);
+      ws.send(msg_mouse);
     });
   </script>
 </body>
