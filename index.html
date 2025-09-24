@@ -2,29 +2,34 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Fluid</title>
   <style>
     /* Style général */
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
       background-color: black;
       color: white;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;       /* plein écran */
-      overflow: hidden;    /* pas de scroll */
+      overflow: hidden;    /* empêche le scroll */
+      touch-action: none;  /* bloque le swipe par défaut */
     }
     h1 {
       text-align: center;
-      font-size: 2em;
+      font-size: 6vw;  /* taille qui s’adapte à la largeur de l’écran */
+      margin: 0;
     }
   </style>
 </head>
 <body>
   <h1>Move your finger here</h1>
+
   <script>
     const ws = new WebSocket("wss://ws-server-production-299a.up.railway.app");
     ws.onopen = () => console.log("Connecté au serveur");
@@ -40,7 +45,7 @@
         console.log("Envoi TOUCH : ", msg_touch);
         ws.send(msg_touch);
       }
-      e.preventDefault(); // évite le scroll sur mobile
+      e.preventDefault(); // évite le scroll/bounce
     }, { passive: false });
 
     // Pour la souris
@@ -51,8 +56,6 @@
         const msg_mouse = JSON.stringify({id:0, x, y});
         console.log("Envoi MOUSE : ", msg_mouse);
         ws.send(msg_mouse);
-      } else {
-        console.log("WebSocket pas encore ouvert");
       }
     });
   </script>
