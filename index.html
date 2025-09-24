@@ -30,6 +30,8 @@
   <h1>Move your finger here</h1>
 
   <script>
+    document.body.style.height = window.innerHeight + "px";
+
     const ws = new WebSocket("wss://ws-server-production-299a.up.railway.app");
     ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
