@@ -5,24 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Fluid</title>
   <style>
-    /* Style général */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
+      height: 100dvh;      /* 👈 nouvelle unité, s’adapte à l’espace visible */
       background-color: black;
       color: white;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;    /* empêche le scroll */
-      touch-action: none;  /* bloque le swipe par défaut */
+      overflow: hidden;
+      touch-action: none;
     }
     h1 {
       text-align: center;
-      font-size: 1vw;  /* taille qui s’adapte à la largeur de l’écran */
+      font-size: 6vw;
       margin: 0;
     }
   </style>
@@ -35,26 +34,22 @@
     ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
 
-    // Pour le touch
     document.addEventListener('touchmove', e => {
       if (ws.readyState === WebSocket.OPEN) {
         const touch = e.touches[0];
         const x = touch.clientX / window.innerWidth;
         const y = touch.clientY / window.innerHeight;
         const msg_touch = JSON.stringify({id:0, x, y});
-        console.log("Envoi TOUCH : ", msg_touch);
         ws.send(msg_touch);
       }
-      e.preventDefault(); // évite le scroll/bounce
+      e.preventDefault();
     }, { passive: false });
 
-    // Pour la souris
     document.addEventListener('mousemove', e => {
       if (ws.readyState === WebSocket.OPEN) {
         const x = e.clientX / window.innerWidth;
         const y = e.clientY / window.innerHeight;
         const msg_mouse = JSON.stringify({id:0, x, y});
-        console.log("Envoi MOUSE : ", msg_mouse);
         ws.send(msg_mouse);
       }
     });
