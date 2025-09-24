@@ -2,40 +2,58 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Pinceau WebSocket Multi-Users</title>
+  <title>Fluid</title>
+  <style>
+    /* Style général */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;       /* plein écran */
+      overflow: hidden;    /* pas de scroll */
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+    }
+  </style>
 </head>
 <body>
-  <h1>Test WebSocket</h1>
+  <h1>Move your finger here</h1>
   <script>
-    // Générer un ID unique pour ce client
-    const userId = Math.floor(Math.random() * 1000000); // nombre aléatoire unique
-
     const ws = new WebSocket("wss://ws-server-production-299a.up.railway.app");
-    ws.onopen = () => console.log(`Connecté au serveur avec userId = ${userId}`);
+    ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
-
-    // Fonction pour envoyer les coordonnées
-    function sendCoords(x, y) {
-      if(ws.readyState === WebSocket.OPEN) {
-        const msg = JSON.stringify({id: userId, x, y});
-        ws.send(msg);
-        console.log("Envoi :", msg);
-      }
-    }
 
     // Pour le touch
     document.addEventListener('touchmove', e => {
-      const touch = e.touches[0];
-      const x = touch.clientX / window.innerWidth;
-      const y = touch.clientY / window.innerHeight;
-      sendCoords(x, y);
-    });
+      if (ws.readyState === WebSocket.OPEN) {
+        const touch = e.touches[0];
+        const x = touch.clientX / window.innerWidth;
+        const y = touch.clientY / window.innerHeight;
+        const msg_touch = JSON.stringify({id:0, x, y});
+        console.log("Envoi TOUCH : ", msg_touch);
+        ws.send(msg_touch);
+      }
+      e.preventDefault(); // évite le scroll sur mobile
+    }, { passive: false });
 
     // Pour la souris
     document.addEventListener('mousemove', e => {
-      const x = e.clientX / window.innerWidth;
-      const y = e.clientY / window.innerHeight;
-      sendCoords(x, y);
+      if (ws.readyState === WebSocket.OPEN) {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        const msg_mouse = JSON.stringify({id:0, x, y});
+        console.log("Envoi MOUSE : ", msg_mouse);
+        ws.send(msg_mouse);
+      } else {
+        console.log("WebSocket pas encore ouvert");
+      }
     });
   </script>
 </body>
