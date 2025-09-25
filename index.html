@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Fluid</title>
   <style>
-    /* Style général */
     body {
       margin: 0;
       padding: 0;
@@ -14,8 +13,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;       /* plein écran */
-      overflow: hidden;    /* pas de scroll */
+      height: 100vh;
+      overflow: hidden;
     }
     h1 {
       text-align: center;
@@ -24,41 +23,57 @@
   </style>
 </head>
 <body>
-  <h1>Move your finger here</h1>
+  <h1 id="status-text">Move your finger here</h1>
+
   <script>
     const ws = new WebSocket("wss://ws-server-production-299a.up.railway.app");
+    const statusText = document.getElementById("status-text");
 
-        // Génère un ID unique pour chaque client (ex: 6 chiffres aléatoires)
+    // Génère un ID unique pour chaque client
     const userId = Math.floor(Math.random() * 1000000);
 
     ws.onopen = () => console.log("Connecté au serveur");
     ws.onmessage = msg => console.log("Reçu :", msg.data);
 
-    // Pour le touch
+    // Détection de déconnexion
+    ws.onclose = () => {
+      console.log("Connexion fermée");
+      statusText.textContent = "You are disconnected, please reload the page";
+    };
+
+    ws.onerror = (err) => {
+      console.error("Erreur WebSocket :", err);
+      statusText.textContent = "You are disconnected, please reload the page";
+    };
+
+    // Touch
     document.addEventListener('touchmove', e => {
       if (ws.readyState === WebSocket.OPEN) {
         const touch = e.touches[0];
         const x = touch.clientX / window.innerWidth;
         const y = touch.clientY / window.innerHeight;
         const msg_touch = JSON.stringify({id:userId, x, y});
-        console.log("Envoi TOUCH : ", msg_touch);
         ws.send(msg_touch);
       }
-      e.preventDefault(); // évite le scroll sur mobile
+      e.preventDefault();
     }, { passive: false });
 
-    // Pour la souris
+    // Mouse
     document.addEventListener('mousemove', e => {
       if (ws.readyState === WebSocket.OPEN) {
         const x = e.clientX / window.innerWidth;
         const y = e.clientY / window.innerHeight;
         const msg_mouse = JSON.stringify({id:userId, x, y});
-        console.log("Envoi MOUSE : ", msg_mouse);
         ws.send(msg_mouse);
-      } else {
-        console.log("WebSocket pas encore ouvert");
       }
     });
+
+    // Heartbeat toutes les 20s
+    setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "heartbeat", id: userId }));
+      }
+    }, 20000);
   </script>
 </body>
 </html>
